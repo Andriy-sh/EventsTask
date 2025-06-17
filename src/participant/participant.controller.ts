@@ -6,18 +6,27 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ParticipantService } from './participant.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Request } from 'express';
 
 @Controller('participant')
 export class ParticipantController {
   constructor(private readonly participantService: ParticipantService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createParticipantDto: CreateParticipantDto) {
-    return this.participantService.create(createParticipantDto);
+  create(
+    @Body() createParticipantDto: CreateParticipantDto,
+    @Req() req: Request,
+  ) {
+    const user = req.user as { userId: string };
+    return this.participantService.create(createParticipantDto, user.userId);
   }
 
   @Get()

@@ -11,8 +11,8 @@ import { PrismaService } from 'src/prisma.service';
 export class ParticipantService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createParticipantDto: CreateParticipantDto) {
-    const { eventId, userId } = createParticipantDto;
+  async create(createParticipantDto: CreateParticipantDto, userId: string) {
+    const { eventId } = createParticipantDto;
 
     const event = await this.prisma.event.findUnique({
       where: { id: eventId },
@@ -30,7 +30,11 @@ export class ParticipantService {
     }
 
     const participant = await this.prisma.participant.create({
-      data: createParticipantDto,
+      data: {
+        ...createParticipantDto,
+
+        userId,
+      },
     });
 
     return {

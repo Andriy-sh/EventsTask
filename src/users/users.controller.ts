@@ -8,7 +8,12 @@ import {
   Get,
   Param,
   Patch,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { use } from 'passport';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -24,9 +29,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id/events')
-  findUserEvents(@Param('id') id: string) {
-    return this.usersService.findUserEvents(id);
+  findUserEvents(@Req() req: Request) {
+    const user = req.user as { userId: string };
+    return this.usersService.findUserEvents(user.userId);
   }
 
   @Patch(':id')

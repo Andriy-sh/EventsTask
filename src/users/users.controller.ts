@@ -30,7 +30,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':id/events')
+  @Get('me/events')
   findUserEvents(@Req() req: Request) {
     const user = req.user as { userId: string };
     return this.usersService.findUserEvents(user.userId);
